@@ -6,16 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="accessing-data-mysql-complete" />
+        <module name="RestController" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="accessing-data-mysql-complete" target="1.8" />
+      <module name="RestController" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="accessing-data-mysql-complete" options="-parameters" />
+      <module name="RestController" options="-parameters" />
     </option>
   </component>
 </project>

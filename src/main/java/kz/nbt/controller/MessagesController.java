@@ -3,6 +3,8 @@ package kz.nbt.controller;
 import java.util.List;
 import java.util.Queue;
 
+import kz.nbt.dispatcher.MessageDispatcher;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,9 +53,7 @@ public class MessagesController {
 				messages = messagesRepo.save(newMessage);
 				
 			}
-			
-			
-	
+
 		
 		return new ResponseEntity<>(messages,HttpStatus.CREATED);
 		}
@@ -69,12 +69,12 @@ public class MessagesController {
 
 
 		Agents chatid = agentsRepo.findByAgentid(Long.parseLong(message.getAgentid()));
-
-
-		System.out.println("chat id value" +chatid.getChatId());
 		if(chatid.getChatId() !=null){
-			Bot bot = new Bot();
-			bot.sendMessage(message.getMessage(), chatid.getChatId());
+
+			MessageDispatcher dispatcher = new MessageDispatcher();
+			dispatcher.sendMessageToWorld(message.getMessage(), chatid.getChatId(),chatid.getChannel());
+			//Bot bot = new Bot();
+			//bot.sendMessage(message.getMessage(), chatid.getChatId());
 			return new ResponseEntity<>(message,HttpStatus.CREATED);
 		}
 		else{
@@ -83,7 +83,13 @@ public class MessagesController {
 		}
 
 	}
-	
+
+	@PostMapping(path="/recieveMessage",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Messages> recieveMessage(@RequestBody Messages message) throws Exception{
+		MessageDispatcher dispatcher = new MessageDispatcher();
+		dispatcher.sendMsgToAgent(message.getMessage(),message.getChatid().toString(),message.getChannel());
+		return new ResponseEntity<>(message,HttpStatus.ACCEPTED);
+	}
 	
 	
 	@GetMapping("/all")

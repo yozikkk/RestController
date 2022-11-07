@@ -3,6 +3,7 @@ package kz.nbt;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import kz.nbt.dispatcher.MessageDispatcher;
 import kz.nbt.websocket.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,65 +45,12 @@ public class Bot extends TelegramLongPollingBot {
   
         try{
             if(update.hasMessage() && update.getMessage().hasText())
-            { 
-     
-              	CallSelfRest selfRest = new CallSelfRest();
-                System.out.println("Is chat assigned to agent:"+selfRest.getChatState(update.getMessage().getChatId().toString()));
-                if(selfRest.getChatState(update.getMessage().getChatId().toString()).isEmpty()){
-
-                    System.out.println("Чат не назначен агенту");
+            {
 
 
-                    JSONObject jsonObject = new JSONObject(selfRest.doPostSimple("findAgent"));
+                MessageDispatcher dispatcher = new MessageDispatcher();
+                dispatcher.sendMsgToAgent(update.getMessage().getText(),update.getMessage().getChatId().toString(),"telegram");
 
-
-
-                    if(jsonObject.isNull("agentid")){
-                        System.out.println("Свободных агентов нет");
-                        System.out.println("Добавляем чат в очередь");
-                        selfRest.addMessage(update.getMessage().getText(), update.getMessage().getChatId().toString(), "telegram");
-                    }
-                    else{
-
-                        System.out.println("Найден свободный агент :"+jsonObject.getLong("agentid"));
-                        String jsonInputString =  "{ "
-                                + "\"agentid\":\""+jsonObject.getLong("agentid")+"\","
-                                + "\"chatId\":\""+update.getMessage().getChatId().toString()+"\"}";
-                        selfRest.doPost(jsonInputString,"assignChatToAgent");
-                        WebSocketClient webSocketClient = new WebSocketClient();
-
-                        Long agentid = jsonObject.getLong("agentid");
-                        webSocketClient.connectAndSend(update.getMessage().getText(),
-                                agentid.toString());
-
-                    }
-
-                }
-                else{
-
-                    System.out.println("Чат уже назначен агенту ");
-                    JSONObject jsonObjectChatState = new JSONObject( selfRest.getChatState(update.getMessage().getChatId().toString()));
-                    Long agentid =  jsonObjectChatState.getLong("agentid");
-                    WebSocketClient webSocketClient = new WebSocketClient();
-                    webSocketClient.connectAndSend(update.getMessage().getText(),
-                            agentid.toString());
-                }
-
-
-            	//Client client = new Client();
-                /*
-            	
-          	   String jsonInputString =  "{ "
-  		      		+ "\"message\":\""+update.getMessage().getText()+"\","
-  		      		+ "\"chatid\":\""+update.getMessage().getChatId().toString()+"\","
-  		      		+ "\"channel\":\""+"telegram"+"\"}";
-
-
-                 */
-          	   //client.connect(jsonInputString);
-
-
-            	
                 Message inMess = update.getMessage();
               
                 String chatId = inMess.getChatId().toString();

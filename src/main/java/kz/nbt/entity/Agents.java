@@ -22,19 +22,30 @@ public class Agents {
 	private Date loginTime;
 	private boolean isReady;
 	private String chatId;
+
+	private String channel;
 	
 	public Agents() {
 		
 	}
 	
 	
-	public Agents(Long agentid, Date loginTime, boolean isReady, String chatId) {
+	public Agents(Long agentid, Date loginTime, boolean isReady, String chatId,String channel) {
 		this.agentid = agentid;
 		this.loginTime = loginTime;
 		this.isReady = isReady;
 		this.chatId = chatId;
+		this.channel = channel;
 	}
-	
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
 	public Integer getId() {
 		return id;
 	}

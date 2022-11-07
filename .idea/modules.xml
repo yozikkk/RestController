@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/accessing-data-mysql-complete.iml" filepath="$PROJECT_DIR$/accessing-data-mysql-complete.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RestController.iml" filepath="$PROJECT_DIR$/RestController.iml" />
     </modules>
   </component>
 </project>

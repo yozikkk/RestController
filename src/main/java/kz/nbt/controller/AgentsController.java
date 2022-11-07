@@ -83,7 +83,7 @@ public class AgentsController {
 	@PostMapping(path="/assignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> assign(@RequestBody Agents agent){
-		agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId());
+		agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId(),agent.getChannel());
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 	
@@ -93,7 +93,7 @@ public class AgentsController {
 	@PostMapping(path="/unAssignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> unassign(@RequestBody Agents agent){
-		agentsRepo.updateChatid(agent.getAgentid(), "");
+		agentsRepo.updateChatid(agent.getAgentid(), "","");
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 	

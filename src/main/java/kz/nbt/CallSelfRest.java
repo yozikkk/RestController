@@ -1,5 +1,6 @@
 package kz.nbt;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -111,11 +112,11 @@ public class CallSelfRest {
 
 	}
 
-	public String doPost(String jsonInputString,String action) throws IOException {
+	public String doPost(String jsonInputString,String action,String url) throws IOException {
 
 		StringBuilder response = new StringBuilder();
-		URL url = new URL("http://localhost:8080/" + action);
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		URL createurl = new URL(url + action);
+		HttpURLConnection con = (HttpURLConnection) createurl.openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/json; utf-8");
 		con.setRequestProperty("Accept", "application/json");
@@ -138,6 +139,35 @@ public class CallSelfRest {
 
 
 	}
+
+	public String doSslPost(String jsonInputString,String action,String url) throws IOException {
+
+		StringBuilder response = new StringBuilder();
+		URL createurl = new URL(url + action);
+		HttpsURLConnection con = (HttpsURLConnection) createurl.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setRequestProperty("Accept", "application/json");
+		con.setDoOutput(true);
+		System.out.println(jsonInputString);
+		try (OutputStream os = con.getOutputStream()) {
+			byte[] input = jsonInputString.getBytes("utf-8");
+			os.write(input, 0, input.length);
+		}
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(con.getInputStream(), "utf-8"))) {
+
+			String responseLine = null;
+			while ((responseLine = br.readLine()) != null) {
+				response.append(responseLine.trim());
+			}
+		}
+		con.disconnect();
+		return response.toString();
+
+
+	}
+
 
 	public String doPostSimple(String action) throws IOException {
 

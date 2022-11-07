@@ -28,8 +28,8 @@ public interface AgentsRepo extends CrudRepository<Agents, Long>{
 	
 	
 	@Modifying(clearAutomatically = true)
-	@Query("update Agents a set a.chatId =:chatId where a.agentid =:agentid")
-	int updateChatid(@Param("agentid") Long agentid,@Param("chatId") String chatId);
+	@Query("update Agents a set a.chatId =:chatId, a.channel =:channel where a.agentid =:agentid")
+	int updateChatid(@Param("agentid") Long agentid,@Param("chatId") String chatId,@Param("channel")String channel);
 
 
 }
