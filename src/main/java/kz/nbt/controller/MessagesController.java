@@ -156,6 +156,7 @@ public class MessagesController {
 				
 				   messages.setMessage(singleString.toString());
 				   messages.setChatid(id.get(0).getChatid());
+				   messages.setChannel(id.get(0).getChannel());
 				   return messages;
 					
 				}
