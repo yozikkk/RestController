@@ -23,7 +23,10 @@ public class MessageDispatcher {
                 System.out.println("Чат не назначен агенту");
                 JSONObject jsonObject = new JSONObject(selfRest.doPostSimple("findAgent"));
 
-                if(jsonObject.isNull("agentid")){
+                System.out.println("agent is ready:"+jsonObject.getBoolean("ready"));
+
+                if(jsonObject.isNull("agentid")||!jsonObject.getBoolean("ready")){
+
                     System.out.println("Свободных агентов нет");
                     System.out.println("Добавляем чат в очередь");
                     selfRest.addMessage(text, chatid,channel);

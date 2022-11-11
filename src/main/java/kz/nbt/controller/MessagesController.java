@@ -1,35 +1,41 @@
 package kz.nbt.controller;
 
-import java.util.List;
-import java.util.Queue;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import kz.nbt.dispatcher.MessageDispatcher;
-import org.json.JSONObject;
+import kz.nbt.entity.Agents;
+import kz.nbt.entity.Messages;
+import kz.nbt.entity.Queue;
+import kz.nbt.repo.AgentsRepo;
+import kz.nbt.repo.MessagesRepo;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import kz.nbt.Bot;
-import kz.nbt.entity.Agents;
-import kz.nbt.entity.Messages;
-import kz.nbt.repo.AgentsRepo;
-import kz.nbt.repo.MessagesRepo;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
-@Controller	
+@RestController
 public class MessagesController {
 	@Autowired 
 	public MessagesRepo messagesRepo;
 	@Autowired 
 	public AgentsRepo agentsRepo;
+
 	
 	@PostMapping(path="/addMessage",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	public ResponseEntity<Messages> addMessage(@RequestBody Messages newMessage) throws Exception{
@@ -107,13 +113,50 @@ public class MessagesController {
 		//  queue;
 		return new ResponseEntity<>(queue,HttpStatus.CREATED);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+	@GetMapping(path= "/getDetailedQueue",produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<kz.nbt.entity.Queue> getDetailedQueueLength() throws JsonProcessingException {
+		//Queue queue = messagesRepo.calculateQueue();
+		List<String[]> strings = messagesRepo.calculateQueue();
+
+		Queue queue = new Queue();
+
+		 for(String[] str : strings){
+
+
+			 for (int i=0;str.length>i;i++){
+
+				 if(str[i].equalsIgnoreCase("telegram")){
+
+					 queue.setTelegram(str[1]);
+
+				 }else if (str[i].equalsIgnoreCase("whatsapp")){
+
+					 queue.setWhatsapp(str[1]);
+
+				 } else if (str[i].equalsIgnoreCase("facebook")) {
+
+					 queue.setFacebook(str[1]);
+					 
+				 } else if (str[i].equalsIgnoreCase("instagram")) {
+
+					 queue.setInstagram(str[1]);
+				 }
+
+
+			 }
+
+		 }
+
+
+		return new ResponseEntity<>(queue,HttpStatus.CREATED);
+	}
+
+
+
+
+
 	@GetMapping(path="/getMessage",  produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional
 	public @ResponseBody Messages  getOldestMessage(@RequestParam(required=false) Long chatid) throws Exception{
@@ -147,7 +190,6 @@ public class MessagesController {
 					
 				List<Messages> iter = messagesRepo.findAllBychatid(id.get(0).getChatid());
 				messagesRepo.removeBychatid(id.get(0).getChatid());
-			
 				StringBuilder singleString = new StringBuilder();
 				for(Messages items:iter) {	
 					singleString.append(items.getMessage());

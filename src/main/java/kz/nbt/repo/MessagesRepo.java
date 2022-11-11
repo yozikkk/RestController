@@ -1,7 +1,9 @@
 package kz.nbt.repo;
 
 import java.util.List;
+import java.util.Objects;
 
+import kz.nbt.entity.Queue;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -18,5 +20,9 @@ public interface MessagesRepo extends CrudRepository<Messages,Integer>{
 	Integer  removeBychatid(Long chatid);
 	@Query("select distinct c.chatid from Messages c")
 	List<Long> findDistinctBychatid();
+
+	@Query("select c.channel, count(distinct(c.chatid)) as len from Messages c group by c.channel")
+	List<String[]> calculateQueue();
+
 
 }

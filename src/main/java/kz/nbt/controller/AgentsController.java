@@ -55,7 +55,9 @@ public class AgentsController {
 		for(Agents agent : agents){
 			if(agent.getChatId() == null){
 				System.out.println("Null appeard:"+agent.getAgentid());
+				System.out.println("Ready:"+agent.isReady());
 				agentsObj.setAgentid(agent.getAgentid());
+				agentsObj.setReady(agent.isReady());
 				break;
 			}
 		}

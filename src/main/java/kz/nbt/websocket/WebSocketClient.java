@@ -19,8 +19,6 @@ public class WebSocketClient
                 .createSocket("ws://localhost:8181/chat/"+room)
                 .connect();
         websocket.sendText(message);
-
-        // Don't forget to call disconnect() after use.
         websocket.disconnect();
     }
 }

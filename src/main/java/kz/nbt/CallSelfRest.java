@@ -112,6 +112,35 @@ public class CallSelfRest {
 
 	}
 
+
+	public String geDetailedQueue() {
+
+		StringBuilder response = new StringBuilder();
+		HttpClient conn = new HttpClient();
+		HttpURLConnection con = conn.doHttpRequest("http://localhost:8080/getDetailedQueue", "GET");
+
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(con.getInputStream(), "utf-8"))) {
+
+			String responseLine = null;
+			while ((responseLine = br.readLine()) != null) {
+				response.append(responseLine.trim());
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		con.disconnect();
+		return response.toString();
+
+	}
+
+
 	public String doPost(String jsonInputString,String action,String url) throws IOException {
 
 		StringBuilder response = new StringBuilder();
