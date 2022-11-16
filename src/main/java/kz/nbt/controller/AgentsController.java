@@ -1,6 +1,8 @@
 package kz.nbt.controller;
 
+import kz.nbt.model.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,7 @@ public class AgentsController {
 	}
 
 
+	/*
 	@PostMapping(path="/findAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Agents findAgent(){
 
@@ -53,7 +56,8 @@ public class AgentsController {
 		Agents agentsObj = new Agents();
 
 		for(Agents agent : agents){
-			if(agent.getChatId() == null){
+			String chatid = agent.getChatId();
+			if(chatid == null||chatid.isEmpty()){
 				System.out.println("Null appeard:"+agent.getAgentid());
 				System.out.println("Ready:"+agent.isReady());
 				agentsObj.setAgentid(agent.getAgentid());
@@ -62,6 +66,21 @@ public class AgentsController {
 			}
 		}
 		return agentsObj;
+	}
+
+	 */
+
+
+	@Transactional
+	@PostMapping(path="/findAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Agents>  findAgent(@RequestBody Agents agent){
+
+
+		 Agents agents = agentsRepo.findFirstBychatIdIsNullOrderByLastUpdateAsc();
+		 agents.setChannel(agent.getChannel());
+		 agents.setChatId(agent.getChatId());
+		 agents.setLastUpdate(agent.getLastUpdate());
+		 return new ResponseEntity<>(agentsRepo.save(agents),HttpStatus.CREATED);
 	}
 
 
@@ -81,21 +100,35 @@ public class AgentsController {
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 	
-	
+
 	@PostMapping(path="/assignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> assign(@RequestBody Agents agent){
 		agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId(),agent.getChannel());
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
-	
-	
-	
-	
+
+
+
+	 /*
+	@PostMapping(path="/assignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
+	public ResponseEntity<Reservation> assign(@RequestBody Agents agent){
+		int rows = agentsRepo.updateAgentIdNotNull(agent.getChatId(),agent.getChannel());
+		Reservation reservation = new Reservation();
+		reservation.setRaws(rows);
+		return new ResponseEntity<>(reservation,HttpStatus.CREATED);
+	}
+
+
+	  */
+
+
+
 	@PostMapping(path="/unAssignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> unassign(@RequestBody Agents agent){
-		agentsRepo.updateChatid(agent.getAgentid(), "","");
+		agentsRepo.updateChatid(agent.getAgentid(), null,null);
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 	

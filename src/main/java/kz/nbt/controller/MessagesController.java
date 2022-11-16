@@ -1,15 +1,12 @@
 package kz.nbt.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import kz.nbt.dispatcher.MessageDispatcher;
 import kz.nbt.entity.Agents;
 import kz.nbt.entity.Messages;
-import kz.nbt.entity.Queue;
+import kz.nbt.model.Queue;
 import kz.nbt.repo.AgentsRepo;
 import kz.nbt.repo.MessagesRepo;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,11 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -106,9 +99,9 @@ public class MessagesController {
 	
 	
 	@GetMapping("/getQueue")
-	public @ResponseBody ResponseEntity<kz.nbt.entity.Queue>  getQueueLength(){
+	public @ResponseBody ResponseEntity<Queue>  getQueueLength(){
 		List<Long> list = messagesRepo.findDistinctBychatid();
-		kz.nbt.entity.Queue queue = new kz.nbt.entity.Queue();
+		Queue queue = new Queue();
 		queue.setLen(list.size());
 		//  queue;
 		return new ResponseEntity<>(queue,HttpStatus.CREATED);
@@ -116,7 +109,7 @@ public class MessagesController {
 
 
 	@GetMapping(path= "/getDetailedQueue",produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<kz.nbt.entity.Queue> getDetailedQueueLength() throws JsonProcessingException {
+	public @ResponseBody ResponseEntity<Queue> getDetailedQueueLength() throws JsonProcessingException {
 		//Queue queue = messagesRepo.calculateQueue();
 		List<String[]> strings = messagesRepo.calculateQueue();
 

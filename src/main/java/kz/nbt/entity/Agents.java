@@ -19,7 +19,9 @@ public class Agents {
 	private Integer id;
 	private Long agentid;
 	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-	private Date loginTime;
+	private Date loginTime,lastUpdate;
+
+
 	private boolean isReady;
 	private String chatId;
 
@@ -36,6 +38,14 @@ public class Agents {
 		this.isReady = isReady;
 		this.chatId = chatId;
 		this.channel = channel;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	public String getChannel() {

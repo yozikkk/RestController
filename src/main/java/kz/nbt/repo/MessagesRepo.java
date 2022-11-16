@@ -1,9 +1,7 @@
 package kz.nbt.repo;
 
 import java.util.List;
-import java.util.Objects;
 
-import kz.nbt.entity.Queue;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

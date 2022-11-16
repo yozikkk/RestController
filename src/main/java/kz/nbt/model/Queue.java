@@ -1,4 +1,4 @@
-package kz.nbt.entity;
+package kz.nbt.model;
 
 public class Queue {
 	
