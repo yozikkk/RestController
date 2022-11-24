@@ -2,11 +2,10 @@ package kz.nbt.model;
 
 public class Queue {
 	
-	
+
 	private int len ;
 
 
-	private String channel;
 	private String telegram ="0";
 	private String whatsapp ="0";
 	private String facebook ="0";
@@ -16,13 +15,6 @@ public class Queue {
 	}
 
 
-	public String getChannel() {
-		return channel;
-	}
-
-	public void setChannel(String channel) {
-		this.channel = channel;
-	}
 
 	public String getTelegram() {
 		return telegram;

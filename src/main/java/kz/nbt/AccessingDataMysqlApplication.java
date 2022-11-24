@@ -10,9 +10,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @SpringBootApplication
 public class AccessingDataMysqlApplication {
 
-	public static void main(String[] args) throws TelegramApiException {
+	public static void main(String[] args)  {
 		SpringApplication.run(AccessingDataMysqlApplication.class, args);
-		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		telegramBotsApi.registerBot(new Bot());
+		//TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+		//telegramBotsApi.registerBot(new Bot());
 	}
 }

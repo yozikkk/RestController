@@ -10,8 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 @Entity
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
+@DynamicUpdate
 public class Messages {
 	
 	@Id
@@ -25,6 +30,8 @@ public class Messages {
 	private Date date;
 	private String channel;
 	private String agentid;
+
+	private String messageid;
 	
 	
 	
@@ -45,12 +52,15 @@ public class Messages {
 		this.channel = channel;
 		this.agentid = agentid;
 	}
-	
-	
-	
-	
-	
-	
+
+	public String getMessageid() {
+		return messageid;
+	}
+
+	public void setMessageid(String messageid) {
+		this.messageid = messageid;
+	}
+
 	public String getAgentid() {
 		return agentid;
 	}

@@ -3,9 +3,11 @@ package kz.nbt.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.nbt.dispatcher.MessageDispatcher;
 import kz.nbt.entity.Agents;
+import kz.nbt.entity.History;
 import kz.nbt.entity.Messages;
 import kz.nbt.model.Queue;
 import kz.nbt.repo.AgentsRepo;
+import kz.nbt.repo.HistoryRepo;
 import kz.nbt.repo.MessagesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,6 +30,9 @@ public class MessagesController {
 	public MessagesRepo messagesRepo;
 	@Autowired 
 	public AgentsRepo agentsRepo;
+
+	@Autowired
+	HistoryRepo historyRepo;
 
 	
 	@PostMapping(path="/addMessage",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
@@ -44,6 +49,7 @@ public class MessagesController {
 				messages.setChannel(newMessage.getChannel());
 				messages.setDate(newMessage.getDate());
 				messages.setMessage(newMessage.getMessage());
+				messages.setMessageid(newMessage.getMessageid());
 				messages.setChatid(newMessage.getChatid());
 				messagesRepo.save(messages);
 				
@@ -69,11 +75,19 @@ public class MessagesController {
 
 		Agents chatid = agentsRepo.findByAgentid(Long.parseLong(message.getAgentid()));
 		if(chatid.getChatId() !=null){
-
 			MessageDispatcher dispatcher = new MessageDispatcher();
 			dispatcher.sendMessageToWorld(message.getMessage(), chatid.getChatId(),chatid.getChannel());
-			//Bot bot = new Bot();
-			//bot.sendMessage(message.getMessage(), chatid.getChatId());
+			History history = new History();
+			history.setChannel(chatid.getChannel());
+			history.setAgentid(message.getAgentid());
+			history.setChatid(chatid.getChatId());
+			history.setMessageid(chatid.getMessageid());
+			history.setDate(new Date());
+			history.setMessage(message.getMessage());
+			history.setWhoSaid("agent");
+			historyRepo.save(history);
+
+
 			return new ResponseEntity<>(message,HttpStatus.CREATED);
 		}
 		else{
@@ -85,8 +99,33 @@ public class MessagesController {
 
 	@PostMapping(path="/recieveMessage",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Messages> recieveMessage(@RequestBody Messages message) throws Exception{
+
+
+
+
+
+
+
+
 		MessageDispatcher dispatcher = new MessageDispatcher();
-		dispatcher.sendMsgToAgent(message.getMessage(),message.getChatid().toString(),message.getChannel());
+		dispatcher.sendMsgToAgent(message.getMessage(),message.getChatid().toString(),message.getChannel(), message.getMessageid());
+		History history = new History();
+		history.setChannel(message.getChannel());
+
+		if(dispatcher.agentid==null){
+			history.setAgentid("queue");
+		}
+		else{
+			history.setAgentid(dispatcher.agentid.toString());
+
+		}
+
+		history.setChatid(message.getChatid().toString());
+		history.setDate(new Date());
+		history.setMessage(message.getMessage());
+		history.setWhoSaid("client");
+		history.setMessageid(message.getMessageid());
+		historyRepo.save(history);
 		return new ResponseEntity<>(message,HttpStatus.ACCEPTED);
 	}
 	
@@ -110,37 +149,22 @@ public class MessagesController {
 
 	@GetMapping(path= "/getDetailedQueue",produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Queue> getDetailedQueueLength() throws JsonProcessingException {
-		//Queue queue = messagesRepo.calculateQueue();
-		List<String[]> strings = messagesRepo.calculateQueue();
-
-		Queue queue = new Queue();
-
+		 List<String[]> strings = messagesRepo.calculateQueue();
+		 Queue queue = new Queue();
 		 for(String[] str : strings){
-
-
 			 for (int i=0;str.length>i;i++){
-
 				 if(str[i].equalsIgnoreCase("telegram")){
-
 					 queue.setTelegram(str[1]);
-
 				 }else if (str[i].equalsIgnoreCase("whatsapp")){
-
 					 queue.setWhatsapp(str[1]);
-
 				 } else if (str[i].equalsIgnoreCase("facebook")) {
-
 					 queue.setFacebook(str[1]);
-					 
 				 } else if (str[i].equalsIgnoreCase("instagram")) {
-
 					 queue.setInstagram(str[1]);
 				 }
-
-
 			 }
-
 		 }
+
 
 
 		return new ResponseEntity<>(queue,HttpStatus.CREATED);
@@ -159,7 +183,7 @@ public class MessagesController {
 			
 			System.out.println("есть активные чаты");
 			List<Messages> iter = messagesRepo.findAllBychatid(chatid);
-			messagesRepo.removeBychatid(chatid);
+			messagesRepo.deleteInBulkBychatid(chatid);
 			Messages messages = new Messages();
 			
 			StringBuilder singleString = new StringBuilder();
@@ -167,28 +191,25 @@ public class MessagesController {
 				singleString.append(items.getMessage());
 				singleString.append(";");
 			}
-			
 			   messages.setMessage(singleString.toString());
 			   messages.setChatid(chatid);
 			   return messages;
-				
 			}
 
 		else {
-			List<Messages> id = messagesRepo.findFirstByOrderByMessage();
+			List<Messages> id = messagesRepo.findFirstByOrderByDateAsc();
 			Messages messages = new Messages();
 			System.out.println("активных чатов нет");
 			if (!id.isEmpty()) {
-	
-					
+
+
 				List<Messages> iter = messagesRepo.findAllBychatid(id.get(0).getChatid());
-				messagesRepo.removeBychatid(id.get(0).getChatid());
+				messagesRepo.deleteInBulkBychatid(id.get(0).getChatid());
 				StringBuilder singleString = new StringBuilder();
 				for(Messages items:iter) {	
 					singleString.append(items.getMessage());
 					singleString.append(";");
 				}
-				
 				   messages.setMessage(singleString.toString());
 				   messages.setChatid(id.get(0).getChatid());
 				   messages.setChannel(id.get(0).getChannel());
