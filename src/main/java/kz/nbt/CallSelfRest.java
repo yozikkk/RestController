@@ -118,7 +118,7 @@ public class CallSelfRest {
 
 		StringBuilder response = new StringBuilder();
 		HttpClient conn = new HttpClient();
-		HttpURLConnection con = conn.doHttpRequest("http://localhost:8080/getDetailedQueue", "GET");
+		HttpURLConnection con = conn.doHttpRequest("http://192.168.2.99:8080/getDetailedQueue", "GET");
 
 		try (BufferedReader br = new BufferedReader(
 				new InputStreamReader(con.getInputStream(), "utf-8"))) {

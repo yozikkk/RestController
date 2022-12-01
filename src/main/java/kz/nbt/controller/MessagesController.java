@@ -100,13 +100,6 @@ public class MessagesController {
 	@PostMapping(path="/recieveMessage",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Messages> recieveMessage(@RequestBody Messages message) throws Exception{
 
-
-
-
-
-
-
-
 		MessageDispatcher dispatcher = new MessageDispatcher();
 		dispatcher.sendMsgToAgent(message.getMessage(),message.getChatid().toString(),message.getChannel(), message.getMessageid());
 		History history = new History();

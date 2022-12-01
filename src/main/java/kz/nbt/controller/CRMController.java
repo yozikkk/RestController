@@ -26,7 +26,7 @@ public class CRMController {
         return  crmRepo.findAllByClientid(clientid);
     }
 
-    @PostMapping(path = "/addCutomer", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/addCustomer", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addCustomer(@RequestBody CRM customer){
 
         CRM customerObj = new CRM();

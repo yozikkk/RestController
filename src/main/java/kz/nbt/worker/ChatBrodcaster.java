@@ -19,6 +19,10 @@ public class ChatBrodcaster extends Thread {
                 WebSocketClient socketClient = new WebSocketClient();
                 socketClient.connectAndSend(rest.geDetailedQueue(),"all");
 
+
+
+
+
             }
 
 
