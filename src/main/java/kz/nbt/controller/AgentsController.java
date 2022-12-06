@@ -101,14 +101,24 @@ public class AgentsController {
 	}
 	
 
+
 	@PostMapping(path="/assignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> assign(@RequestBody Agents agent){
-		agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId(),agent.getChannel());
+		agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId(),agent.getChannel(),agent.getDmccPhone());
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 
 
+
+	@PostMapping(path="/assignDmccPhone",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
+	public ResponseEntity<Agents> assignDmcc(@RequestBody Agents agent) {
+		//agentsRepo.updateChatid(agent.getAgentid(), agent.getChatId(), agent.getChannel(), agent.getDmccPhone());
+		agentsRepo.updateDmcc(agent.getAgentid(), agent.getDmccPhone());
+		return new ResponseEntity<>(agent, HttpStatus.CREATED);
+
+	}
 
 	 /*
 	@PostMapping(path="/assignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +138,7 @@ public class AgentsController {
 	@PostMapping(path="/unAssignChatToAgent",consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Transactional
 	public ResponseEntity<Agents> unassign(@RequestBody Agents agent){
-		agentsRepo.updateChatid(agent.getAgentid(), null,null);
+		agentsRepo.updateChatid(agent.getAgentid(), null,null,null);
 		return new ResponseEntity<>(agent,HttpStatus.CREATED);
 	}
 	

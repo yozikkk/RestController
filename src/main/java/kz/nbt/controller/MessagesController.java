@@ -51,6 +51,7 @@ public class MessagesController {
 				messages.setMessage(newMessage.getMessage());
 				messages.setMessageid(newMessage.getMessageid());
 				messages.setChatid(newMessage.getChatid());
+				messages.setDmccPhone(newMessage.getDmccPhone());
 				messagesRepo.save(messages);
 				
 			}

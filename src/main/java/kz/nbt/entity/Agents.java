@@ -26,13 +26,23 @@ public class Agents {
 	private String chatId;
 
 	private String channel;
-	
+
+
+	private String dmccPhone;
 	public Agents() {
 		
 	}
-	
-	
-	public Agents(Long agentid, Date loginTime, boolean isReady, String chatId,String channel) {
+
+
+	public String getDmccPhone() {
+		return dmccPhone;
+	}
+
+	public void setDmccPhone(String dmccPhone) {
+		this.dmccPhone = dmccPhone;
+	}
+
+	public Agents(Long agentid, Date loginTime, boolean isReady, String chatId, String channel) {
 		this.agentid = agentid;
 		this.loginTime = loginTime;
 		this.isReady = isReady;

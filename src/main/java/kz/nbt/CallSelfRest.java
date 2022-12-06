@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class CallSelfRest {
 
-	public String addMessage(String message, String chatid, String channel,String messageid) throws IOException {
+	public String addMessage(String message, String chatid, String channel,String messageid,String dmccPhone) throws IOException {
 
 
 		StringBuilder response = new StringBuilder();
@@ -29,6 +29,7 @@ public class CallSelfRest {
 				+ "\"messageid\":\"" + messageid + "\","
 				+ "\"chatid\":\"" + chatid + "\","
 				+ "\"date\":\"" + date + "\","
+				+ "\"dmccPhone\":\"" + dmccPhone + "\","
 				+ "\"channel\":\"" + channel + "\"}";
 		System.out.println(jsonInputString);
 		try (OutputStream os = con.getOutputStream()) {

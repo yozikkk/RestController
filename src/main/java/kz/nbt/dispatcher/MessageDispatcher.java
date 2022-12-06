@@ -2,6 +2,7 @@ package kz.nbt.dispatcher;
 
 import kz.nbt.CallSelfRest;
 import kz.nbt.websocket.WebSocketClient;
+import kz.nbt.worker.DMCCService;
 import org.json.JSONObject;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
@@ -23,7 +24,6 @@ public class MessageDispatcher {
             CallSelfRest selfRest = new CallSelfRest();
             if(selfRest.getChatState(chatid).isEmpty()){
                 System.out.println("Чат не назначен агенту");
-
                 String pattern = "yyyy-MM-dd'T'HH:mm:ss";
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 String date = simpleDateFormat.format(new Date());
@@ -37,10 +37,15 @@ public class MessageDispatcher {
                     if(jsonObject.isNull("agentid")||!jsonObject.getBoolean("ready")){
                         System.out.println("Свободных агентов нет");
                         System.out.println("Добавляем чат в очередь");
-                        selfRest.addMessage(text,chatid,channel,messageid);
+                        DMCCService service = new DMCCService();
+                        JSONObject dmccPhone = new JSONObject(service.putToQueue(chatid));
+                        selfRest.addMessage(text,chatid,channel,messageid,dmccPhone.getString(chatid));
+
                     }
                     else{
                         System.out.println("Найден свободный агент :"+jsonObject.getLong("agentid"));
+                        DMCCService service = new DMCCService();
+                        service.putToQueue(chatid);
                         WebSocketClient webSocketClient = new WebSocketClient();
                         Long agentid = jsonObject.getLong("agentid");
                         this.agentid = agentid;
@@ -52,7 +57,9 @@ public class MessageDispatcher {
                     e.printStackTrace();
                     System.out.println("Свободных агентов нет");
                     System.out.println("Добавляем чат в очередь");
-                    selfRest.addMessage(text, chatid,channel,messageid);
+                    DMCCService service = new DMCCService();
+                    JSONObject dmccPhone = new JSONObject(service.putToQueue(chatid));
+                    selfRest.addMessage(text,chatid,channel,messageid,dmccPhone.getString(chatid));
                 }
             }
             else{

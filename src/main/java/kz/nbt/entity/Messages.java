@@ -32,12 +32,18 @@ public class Messages {
 	private String agentid;
 
 	private String messageid;
-	
-	
-	
-	
-	
-	
+
+	private String dmccPhone;
+
+
+	public String getDmccPhone() {
+		return dmccPhone;
+	}
+
+	public void setDmccPhone(String dmccPhone) {
+		this.dmccPhone = dmccPhone;
+	}
+
 	public Messages() {
 		
 		
